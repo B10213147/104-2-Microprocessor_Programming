@@ -15,7 +15,6 @@ typedef struct{
 
 int char2int(char in){
     int out = in - 48;
-    printf("out=%d\n",out);
     return out;
 }
 
@@ -62,7 +61,7 @@ complex_num get_Complex(void){
         mid_Sign_bit = i-1;
     }
 
-    if(str[0] == '-'){   //check first character is negative or not
+    if(str[0] == '-' || str[0] == '+'){   //check first character
         first_flag = true;
         first_Sign = str[0];
     }
@@ -74,54 +73,137 @@ complex_num get_Complex(void){
     int check = (int)first_flag*100 + (int)mid_flag*10 + (int)last_flag;
     float sum = 0;
     int j;
+    int n = 0;
 
     switch(check){
     case 0:
         printf("only real part\n");
-        int n = 0;
+
         for(j=last_Sign_bit; j>=0; j--){
             sum = sum + char2int(str[j]) * pow(10,n);
-            printf("sum=%f\n",sum);
             n++;
         }
+
         temp.real_part = sum;
+        temp.imaginary_part = 0;
         break;
+
     case 1:
         printf("only imaginary part\n");
+
+        for(j=last_Sign_bit-1; j>=0; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        temp.real_part = 0;
+        temp.imaginary_part = sum;
         break;
+
     case 10:
         printf("input type error\n");
+
+        temp.real_part = 0;
+        temp.imaginary_part = 0;
         break;
+
     case 11:
         printf("complex number\n");
+
+        for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        if(mid_Sign == '-') temp.imaginary_part = -sum;
+        else if(mid_Sign == '+') temp.imaginary_part = sum;
+
+        sum = 0;
+        n = 0;
+
+        for(j=mid_Sign_bit-1; j>=0; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        temp.real_part = sum;
         break;
+
     case 100:
         printf("only real part\n");
+
+        for(j=last_Sign_bit; j>=1; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        if(first_Sign == '-') temp.real_part = -sum;
+        else if(first_Sign == '+') temp.real_part = sum;
+
+        temp.imaginary_part = 0;
         break;
+
     case 101:
         printf("only imaginary part\n");
+
+        for(j=last_Sign_bit-1; j>=1; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        temp.real_part = 0;
+        temp.imaginary_part = -sum;
         break;
+
     case 110:
         printf("input type error\n");
+
+        temp.real_part = 0;
+        temp.imaginary_part = 0;
         break;
+
     case 111:
         printf("complex number\n");
+
+        for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        if(mid_Sign == '-') temp.imaginary_part = -sum;
+        else if(mid_Sign == '+') temp.imaginary_part = sum;
+
+        sum = 0;
+        n = 0;
+
+        for(j=mid_Sign_bit-1; j>=1; j--){
+            sum = sum + char2int(str[j]) * pow(10,n);
+            n++;
+        }
+
+        if(first_Sign == '-') temp.real_part = -sum;
+        else if(first_Sign == '+') temp.real_part = sum;
+
         break;
+
     default:
         printf("ERROR\n");
-
     }
-    printf("check=%d\n",check);
+    //printf("check=%d\n",check);
     return temp;
 }
 
 int main()
 {
     complex_num a, b;
+
     a = get_Complex();
     printf("real_part=%d\n",(int)a.real_part);
-    //b = get_Complex();
-    //printf("real_part=%d\n",b.real_part);
+    printf("imaginary_part=%d\n",(int)a.imaginary_part);
+
+    b = get_Complex();
+    printf("real_part=%d\n",(int)b.real_part);
+    printf("imaginary_part=%d\n",(int)b.imaginary_part);
 
     return 0;
 }
