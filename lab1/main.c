@@ -34,8 +34,6 @@ complex_num get_Complex(void){
 
     while(str[i] != 0) i++;  //total bits of input string
 
-    printf("%d\n",i);
-
     if(str[i-1] == 'i'){    //find the last bit is 'i' or not
         last_flag = true;
     }
@@ -189,24 +187,21 @@ complex_num get_Complex(void){
     default:
         printf("ERROR\n");
     }
-    //printf("check=%d\n",check);
+
     return temp;
 }
 
-void print_Complex(complex_num num){
-    float x = 0.00321;
+int num2array(float x, unsigned int *q_int){
     int i=0;
     int digit;
-    //int a;
 
     while(x>0.01 || x<-0.01){
         x /= 10;
         i++;
     }
-    printf("i=%d\n",i);
     digit = i;
 
-    unsigned int q_int[10];
+    //static unsigned int q_int[10];
     x = x*pow(10,i+3);
 
     while(i>=0){
@@ -215,48 +210,133 @@ void print_Complex(complex_num num){
         i--;
     }
 
-
-
     switch(digit){
     case 2:
         for(i=9; i>0; i--){
             q_int[i] = q_int[i-1];
         }
+
         q_int[0] = 0;
+        digit += 1;
         break;
 
     case 1:
         for(i=9; i>1; i--){
             q_int[i] = q_int[i-2];
         }
+
         q_int[0] = 0;
         q_int[1] = 0;
+        digit += 2;
         break;
 
     case 0:
         for(i=9; i>2; i--){
             q_int[i] = q_int[i-3];
         }
+
         q_int[0] = 0;
         q_int[1] = 0;
         q_int[2] = 0;
+        digit += 3;
         break;
     }
 
-    for(i=0;i<10;i++){
-        printf("%u",q_int[i]);
+    return digit;
+}
+
+char int2char(unsigned int x){
+    if((x>=0 && x<=9) || x==-2){
+        x = x+48;
+    }
+
+    return x;
+}
+
+void print_String(unsigned int *a, int size){
+    int i;
+    char *out = malloc(size);
+
+    for(i=0;i<size;i++){
+        out[i]=int2char(a[i]);
+    }
+
+    printf("num=%s\n",out);
+    free(out);
+}
+
+void adjust_Float(unsigned int *a, int digit){
+    int d2flag, d1flag;
+
+    if(a[digit-1] == 0) d2flag = 0;
+    else d2flag = 1;
+
+    if(a[digit-2] == 0) d1flag = 0;
+    else d1flag = 1;
+
+    int check = 10*d1flag + d2flag;
+
+    switch(check){
+    case 0:
+        printf("only decimal\n");
+
+        print_String(a, digit-2);
+        break;
+
+    case 1:
+        printf("float to 2 part\n");
+
+        //shift and add dot
+        a[digit] = a[digit-1];
+        a[digit-1] = a[digit-2];
+        a[digit-2] = -2;
+
+        print_String(a, digit+1);
+        break;
+
+    case 10:
+        printf("float to 1 part\n");
+
+        //shift and add dot
+        a[digit-1] = a[digit-2];
+        a[digit-2] = -2;
+
+        print_String(a, digit);
+        break;
+
+    case 11:
+        printf("float to 2 part\n");
+
+        //shift and add dot
+        a[digit] = a[digit-1];
+        a[digit-1] = a[digit-2];
+        a[digit-2] = -2;
+
+        print_String(a, digit+1);
+        break;
     }
 
 }
 
+void print_Complex(complex_num num){
+    unsigned int *a = malloc(10);
+
+    adjust_Float(a,num2array(num.real_part,a));
+
+    adjust_Float(a,num2array(num.imaginary_part,a));
+
+    free(a);
+}
+
 int main()
 {
-    complex_num a;
-
-    a = get_Complex();
+    complex_num a = get_Complex();
+/*
+    a.real_part = 12.0086;
+    a.imaginary_part = 5678;
+*/
 
     print_Complex(a);
-
 
     return 0;
 }
