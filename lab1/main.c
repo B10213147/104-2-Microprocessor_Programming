@@ -193,17 +193,70 @@ complex_num get_Complex(void){
     return temp;
 }
 
+void print_Complex(complex_num num){
+    float x = 0.00321;
+    int i=0;
+    int digit;
+    //int a;
+
+    while(x>0.01 || x<-0.01){
+        x /= 10;
+        i++;
+    }
+    printf("i=%d\n",i);
+    digit = i;
+
+    unsigned int q_int[10];
+    x = x*pow(10,i+3);
+
+    while(i>=0){
+        q_int[i] = (unsigned int)abs((int)x % 10);
+        x /= 10;
+        i--;
+    }
+
+
+
+    switch(digit){
+    case 2:
+        for(i=9; i>0; i--){
+            q_int[i] = q_int[i-1];
+        }
+        q_int[0] = 0;
+        break;
+
+    case 1:
+        for(i=9; i>1; i--){
+            q_int[i] = q_int[i-2];
+        }
+        q_int[0] = 0;
+        q_int[1] = 0;
+        break;
+
+    case 0:
+        for(i=9; i>2; i--){
+            q_int[i] = q_int[i-3];
+        }
+        q_int[0] = 0;
+        q_int[1] = 0;
+        q_int[2] = 0;
+        break;
+    }
+
+    for(i=0;i<10;i++){
+        printf("%u",q_int[i]);
+    }
+
+}
+
 int main()
 {
-    complex_num a, b;
+    complex_num a;
 
     a = get_Complex();
-    printf("real_part=%d\n",(int)a.real_part);
-    printf("imaginary_part=%d\n",(int)a.imaginary_part);
 
-    b = get_Complex();
-    printf("real_part=%d\n",(int)b.real_part);
-    printf("imaginary_part=%d\n",(int)b.imaginary_part);
+    print_Complex(a);
+
 
     return 0;
 }
