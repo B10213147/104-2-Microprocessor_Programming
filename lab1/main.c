@@ -20,7 +20,7 @@ int char2int(char in){
 
 complex_num get_Complex(void){
     complex_num temp;
-    char str[10];
+    char str[20];
     gets(str);
 
     char first_flag = false;
@@ -69,7 +69,7 @@ complex_num get_Complex(void){
     }
 
     int check = (int)first_flag*100 + (int)mid_flag*10 + (int)last_flag;
-    float sum = 0;
+    int sum = 0;
     int j;
     int n = 0;
 
@@ -78,11 +78,11 @@ complex_num get_Complex(void){
         printf("only real part\n");
 
         for(j=last_Sign_bit; j>=0; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        temp.real_part = sum;
+        temp.real_part = (float)sum;
         temp.imaginary_part = 0;
         break;
 
@@ -90,12 +90,12 @@ complex_num get_Complex(void){
         printf("only imaginary part\n");
 
         for(j=last_Sign_bit-1; j>=0; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
         temp.real_part = 0;
-        temp.imaginary_part = sum;
+        temp.imaginary_part = (float)sum;
         break;
 
     case 10:
@@ -109,34 +109,34 @@ complex_num get_Complex(void){
         printf("complex number\n");
 
         for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        if(mid_Sign == '-') temp.imaginary_part = -sum;
-        else if(mid_Sign == '+') temp.imaginary_part = sum;
+        if(mid_Sign == '-') temp.imaginary_part = (float)(-sum);
+        else if(mid_Sign == '+') temp.imaginary_part = (float)sum;
 
         sum = 0;
         n = 0;
 
         for(j=mid_Sign_bit-1; j>=0; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        temp.real_part = sum;
+        temp.real_part = (float)sum;
         break;
 
     case 100:
         printf("only real part\n");
 
         for(j=last_Sign_bit; j>=1; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        if(first_Sign == '-') temp.real_part = -sum;
-        else if(first_Sign == '+') temp.real_part = sum;
+        if(first_Sign == '-') temp.real_part = (float)(-sum);
+        else if(first_Sign == '+') temp.real_part = (float)sum;
 
         temp.imaginary_part = 0;
         break;
@@ -145,12 +145,12 @@ complex_num get_Complex(void){
         printf("only imaginary part\n");
 
         for(j=last_Sign_bit-1; j>=1; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
         temp.real_part = 0;
-        temp.imaginary_part = -sum;
+        temp.imaginary_part = (float)(-sum);
         break;
 
     case 110:
@@ -164,23 +164,23 @@ complex_num get_Complex(void){
         printf("complex number\n");
 
         for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        if(mid_Sign == '-') temp.imaginary_part = -sum;
-        else if(mid_Sign == '+') temp.imaginary_part = sum;
+        if(mid_Sign == '-') temp.imaginary_part = (float)(-sum);
+        else if(mid_Sign == '+') temp.imaginary_part = (float)sum;
 
         sum = 0;
         n = 0;
 
         for(j=mid_Sign_bit-1; j>=1; j--){
-            sum = sum + char2int(str[j]) * pow(10,n);
+            sum = sum + char2int(str[j]) * (int)pow(10,n);
             n++;
         }
 
-        if(first_Sign == '-') temp.real_part = -sum;
-        else if(first_Sign == '+') temp.real_part = sum;
+        if(first_Sign == '-') temp.real_part = (float)(-sum);
+        else if(first_Sign == '+') temp.real_part = (float)sum;
 
         break;
 
@@ -191,21 +191,24 @@ complex_num get_Complex(void){
     return temp;
 }
 
-int num2array(float x, unsigned int *q_int){
+int num2array(float x, int *q_int){
     int i=0;
     int digit;
 
-    while(x>0.01 || x<-0.01){
-        x /= 10;
+    x = x*10;   //trick in here
+    //cannot determine between the float value
+    while(((int)(x*100) <= -10) || ((int)(x*100) >= 10)){
+        x = x/10;
         i++;
     }
     digit = i;
+    int check;
 
-    //static unsigned int q_int[10];
-    x = x*pow(10,i+3);
+    x = x*pow(10,i+2);  //make ii.xxx to iixxx
 
     while(i>=0){
-        q_int[i] = (unsigned int)abs((int)x % 10);
+        check = abs((int)x % 10);
+        q_int[i] = check;
         x /= 10;
         i--;
     }
@@ -245,27 +248,33 @@ int num2array(float x, unsigned int *q_int){
     return digit;
 }
 
-char int2char(unsigned int x){
+char int2char(int x){
     if((x>=0 && x<=9) || x==-2){
         x = x+48;
     }
-
+    else{
+        printf("Convert value is not 0~9 or dot.\n");
+        printf("Error num=%d\n",x);
+        system("pause");
+    }
     return x;
 }
 
-void print_String(unsigned int *a, int size){
+void print_String(int *a, int size){
     int i;
-    char *out = malloc(size);
+    char *out = malloc(size+1);
 
     for(i=0;i<size;i++){
         out[i]=int2char(a[i]);
     }
+    out[size] = '\0';   //add '\0' at last to complete the string format
 
     printf("num=%s\n",out);
+
     free(out);
 }
 
-void adjust_Float(unsigned int *a, int digit){
+void adjust_Float(int *a, int digit){
     int d2flag, d1flag;
 
     if(a[digit-1] == 0) d2flag = 0;
@@ -315,11 +324,10 @@ void adjust_Float(unsigned int *a, int digit){
         print_String(a, digit+1);
         break;
     }
-
 }
 
 void print_Complex(complex_num num){
-    unsigned int *a = malloc(10);
+    int *a = malloc(20);
 
     adjust_Float(a,num2array(num.real_part,a));
 
@@ -331,10 +339,9 @@ void print_Complex(complex_num num){
 int main()
 {
     complex_num a = get_Complex();
-/*
-    a.real_part = 12.0086;
-    a.imaginary_part = 5678;
-*/
+
+    //a.real_part = 12.0086;
+    //a.imaginary_part = 31998.9;
 
     print_Complex(a);
 
