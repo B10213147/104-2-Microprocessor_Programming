@@ -389,14 +389,64 @@ void print_Complex(complex_num num){
     free(a);
 }
 
+complex_num c_Sum(complex_num a, complex_num b){
+    complex_num answer;
+
+    answer.real_part = a.real_part + b.real_part;
+    answer.imaginary_part = a.imaginary_part + b.imaginary_part;
+
+    return answer;
+}
+
+complex_num c_Difference(complex_num a, complex_num b){
+    complex_num answer;
+
+    answer.real_part = a.real_part - b.real_part;
+    answer.imaginary_part = a.imaginary_part - b.imaginary_part;
+
+    return answer;
+}
+
+complex_num c_Product(complex_num a, complex_num b){
+    complex_num answer;
+
+    answer.real_part = a.real_part * b.real_part - a.imaginary_part * b.imaginary_part;
+    answer.imaginary_part = a.real_part * b.imaginary_part + a.imaginary_part * b.real_part;
+
+    return answer;
+}
+
+complex_num c_Quotient(complex_num a, complex_num b){
+    complex_num answer;
+
+    return answer;
+}
+
 int main()
 {
+    complex_num answer;
+
+    printf("Enter first complex number:");
     complex_num a = get_Complex();
+    printf("Enter second complex number:");
+    complex_num b = get_Complex();
 
-    //a.real_part = 0.911;
-    //a.imaginary_part = 1.101;
+    printf("Sum:");
+    answer = c_Sum(a,b);
+    print_Complex(answer);
 
-    print_Complex(a);
+    printf("Difference:");
+    answer = c_Difference(a,b);
+    print_Complex(answer);
 
+    printf("Product:");
+    answer = c_Product(a,b);
+    print_Complex(answer);
+
+    //printf("Quotient:");
+    //answer = c_Quotient(a,b);
+    //print_Complex(answer);
+
+    system("pause");
     return 0;
 }

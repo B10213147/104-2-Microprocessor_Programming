@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1458068556 source:i:\lab1\main.c
+1458079841 source:i:\lab1\main.c
 	"stdio.h"
 	"stdlib.h"
 	"math.h"
