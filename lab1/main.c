@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "stdio.h"
+#include "stdlib.h"
+#include "math.h"
 
 #define false 0
 #define true 1
@@ -75,7 +75,7 @@ complex_num get_Complex(void){
 
     switch(check){
     case 0:
-        printf("only real part\n");
+        //printf("only real part\n");
 
         for(j=last_Sign_bit; j>=0; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -87,7 +87,7 @@ complex_num get_Complex(void){
         break;
 
     case 1:
-        printf("only imaginary part\n");
+        //printf("only imaginary part\n");
 
         for(j=last_Sign_bit-1; j>=0; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -99,14 +99,14 @@ complex_num get_Complex(void){
         break;
 
     case 10:
-        printf("input type error\n");
+        //printf("input type error\n");
 
         temp.real_part = 0;
         temp.imaginary_part = 0;
         break;
 
     case 11:
-        printf("complex number\n");
+        //printf("complex number\n");
 
         for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -128,7 +128,7 @@ complex_num get_Complex(void){
         break;
 
     case 100:
-        printf("only real part\n");
+        //printf("only real part\n");
 
         for(j=last_Sign_bit; j>=1; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -142,7 +142,7 @@ complex_num get_Complex(void){
         break;
 
     case 101:
-        printf("only imaginary part\n");
+        //printf("only imaginary part\n");
 
         for(j=last_Sign_bit-1; j>=1; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -154,14 +154,14 @@ complex_num get_Complex(void){
         break;
 
     case 110:
-        printf("input type error\n");
+        //printf("input type error\n");
 
         temp.real_part = 0;
         temp.imaginary_part = 0;
         break;
 
     case 111:
-        printf("complex number\n");
+        //printf("complex number\n");
 
         for(j=last_Sign_bit-1; j>mid_Sign_bit; j--){
             sum = sum + char2int(str[j]) * (int)pow(10,n);
@@ -185,7 +185,7 @@ complex_num get_Complex(void){
         break;
 
     default:
-        printf("ERROR\n");
+        printf("Error in get_Complex()!\n");
     }
 
     return temp;
@@ -203,6 +203,7 @@ int num2array(float x, int *q_int){
     }
     digit = i;
     int check;
+    //char sign;
 
     x = x*pow(10,i+2);  //make ii.xxx to iixxx
 
@@ -243,6 +244,10 @@ int num2array(float x, int *q_int){
         q_int[2] = 0;
         digit += 3;
         break;
+
+    default:
+
+        break;
     }
 
     return digit;
@@ -257,19 +262,22 @@ char int2char(int x){
         printf("Error num=%d\n",x);
         system("pause");
     }
-    return x;
+    return (char)x;
 }
 
 void print_String(int *a, int size){
     int i;
+    char temp;
     char *out = malloc(size+1);
 
     for(i=0;i<size;i++){
-        out[i]=int2char(a[i]);
+        temp = int2char(a[i]);
+        out[i] = 0;
+        out[i] = temp;
     }
     out[size] = '\0';   //add '\0' at last to complete the string format
 
-    printf("num=%s\n",out);
+    printf("%s",out);
 
     free(out);
 }
@@ -287,13 +295,13 @@ void adjust_Float(int *a, int digit){
 
     switch(check){
     case 0:
-        printf("only decimal\n");
+        //printf("only decimal\n");
 
         print_String(a, digit-2);
         break;
 
     case 1:
-        printf("float to 2 part\n");
+        //printf("float to 2 part\n");
 
         //shift and add dot
         a[digit] = a[digit-1];
@@ -304,7 +312,7 @@ void adjust_Float(int *a, int digit){
         break;
 
     case 10:
-        printf("float to 1 part\n");
+        //printf("float to 1 part\n");
 
         //shift and add dot
         a[digit-1] = a[digit-2];
@@ -314,7 +322,7 @@ void adjust_Float(int *a, int digit){
         break;
 
     case 11:
-        printf("float to 2 part\n");
+        //printf("float to 2 part\n");
 
         //shift and add dot
         a[digit] = a[digit-1];
@@ -323,15 +331,60 @@ void adjust_Float(int *a, int digit){
 
         print_String(a, digit+1);
         break;
+
+    default:
+        printf("Error in adjust_Float()!\n");
     }
 }
 
 void print_Complex(complex_num num){
     int *a = malloc(20);
+    int format1,format2,check;
 
-    adjust_Float(a,num2array(num.real_part,a));
+    if((int)(num.real_part*1000)==0) format1 = 0;
+    else format1 = 1;
+    if((int)(num.imaginary_part*1000)==0) format2 = 0;
+    else format2 = 1;
 
-    adjust_Float(a,num2array(num.imaginary_part,a));
+    check = 10*format2 + format1;
+    //printf("check=%d\n",check);
+    switch(check){
+    case 0: //0+0i
+        printf("0");
+        break;
+
+    case 1: //only real part
+        if((int)num.real_part<0) printf("-");
+
+        adjust_Float(a,num2array(num.real_part,a));
+        break;
+
+    case 10:    //only imaginary part
+        if((int)num.imaginary_part<0) printf("-");
+
+        adjust_Float(a,num2array(num.imaginary_part,a));
+
+        printf("i");
+        break;
+
+    case 11:    //complex number
+        if((int)(num.real_part*10)<0) printf("-");
+
+        adjust_Float(a,num2array(num.real_part,a));
+
+        if((int)(num.imaginary_part*10)<0) printf("-");
+        else printf("+");
+
+        adjust_Float(a,num2array(num.imaginary_part,a));
+
+        printf("i");
+        break;
+
+    default:
+        printf("Error in print_Complex()!\n");
+    }
+
+    printf("\n");
 
     free(a);
 }
@@ -340,8 +393,8 @@ int main()
 {
     complex_num a = get_Complex();
 
-    //a.real_part = 12.0086;
-    //a.imaginary_part = 31998.9;
+    //a.real_part = 0.911;
+    //a.imaginary_part = 1.101;
 
     print_Complex(a);
 
