@@ -191,205 +191,7 @@ complex_num get_Complex(void){
     return temp;
 }
 
-int num2array(float x, int *q_int){
-    int i=0;
-    int digit;
-
-    x = x*10;   //trick in here
-    //cannot determine between the float value
-    while(((int)(x*100) <= -10) || ((int)(x*100) >= 10)){
-        x = x/10;
-        i++;
-    }
-    digit = i;
-    int check;
-    //char sign;
-
-    x = x*pow(10,i+2);  //make ii.xxx to iixxx
-
-    while(i>=0){
-        check = abs((int)x % 10);
-        q_int[i] = check;
-        x /= 10;
-        i--;
-    }
-
-    switch(digit){
-    case 2:
-        for(i=9; i>0; i--){
-            q_int[i] = q_int[i-1];
-        }
-
-        q_int[0] = 0;
-        digit += 1;
-        break;
-
-    case 1:
-        for(i=9; i>1; i--){
-            q_int[i] = q_int[i-2];
-        }
-
-        q_int[0] = 0;
-        q_int[1] = 0;
-        digit += 2;
-        break;
-
-    case 0:
-        for(i=9; i>2; i--){
-            q_int[i] = q_int[i-3];
-        }
-
-        q_int[0] = 0;
-        q_int[1] = 0;
-        q_int[2] = 0;
-        digit += 3;
-        break;
-
-    default:
-
-        break;
-    }
-
-    return digit;
-}
-
-char int2char(int x){
-    if((x>=0 && x<=9) || x==-2){
-        x = x+48;
-    }
-    else{
-        printf("Convert value is not 0~9 or dot.\n");
-        printf("Error num=%d\n",x);
-        system("pause");
-    }
-    return (char)x;
-}
-
-void print_String(int *a, int size){
-    int i;
-    char temp;
-    char *out = malloc(size+1);
-
-    for(i=0;i<size;i++){
-        temp = int2char(a[i]);
-        out[i] = 0;
-        out[i] = temp;
-    }
-    out[size] = '\0';   //add '\0' at last to complete the string format
-
-    printf("%s",out);
-
-    free(out);
-}
-
-void adjust_Float(int *a, int digit){
-    int d2flag, d1flag;
-
-    if(a[digit-1] == 0) d2flag = 0;
-    else d2flag = 1;
-
-    if(a[digit-2] == 0) d1flag = 0;
-    else d1flag = 1;
-
-    int check = 10*d1flag + d2flag;
-
-    switch(check){
-    case 0:
-        //printf("only decimal\n");
-
-        print_String(a, digit-2);
-        break;
-
-    case 1:
-        //printf("float to 2 part\n");
-
-        //shift and add dot
-        a[digit] = a[digit-1];
-        a[digit-1] = a[digit-2];
-        a[digit-2] = -2;
-
-        print_String(a, digit+1);
-        break;
-
-    case 10:
-        //printf("float to 1 part\n");
-
-        //shift and add dot
-        a[digit-1] = a[digit-2];
-        a[digit-2] = -2;
-
-        print_String(a, digit);
-        break;
-
-    case 11:
-        //printf("float to 2 part\n");
-
-        //shift and add dot
-        a[digit] = a[digit-1];
-        a[digit-1] = a[digit-2];
-        a[digit-2] = -2;
-
-        print_String(a, digit+1);
-        break;
-
-    default:
-        printf("Error in adjust_Float()!\n");
-    }
-}
-
-void print_Complex(complex_num num){
-    int *a = malloc(20);
-    int format1,format2,check;
-
-    if((int)(num.real_part*1000)==0) format1 = 0;
-    else format1 = 1;
-    if((int)(num.imaginary_part*1000)==0) format2 = 0;
-    else format2 = 1;
-
-    check = 10*format2 + format1;
-    //printf("check=%d\n",check);
-    switch(check){
-    case 0: //0+0i
-        printf("0");
-        break;
-
-    case 1: //only real part
-        if((int)num.real_part<0) printf("-");
-
-        adjust_Float(a,num2array(num.real_part,a));
-        break;
-
-    case 10:    //only imaginary part
-        if((int)num.imaginary_part<0) printf("-");
-
-        adjust_Float(a,num2array(num.imaginary_part,a));
-
-        printf("i");
-        break;
-
-    case 11:    //complex number
-        if((int)(num.real_part*10)<0) printf("-");
-
-        adjust_Float(a,num2array(num.real_part,a));
-
-        if((int)(num.imaginary_part*10)<0) printf("-");
-        else printf("+");
-
-        adjust_Float(a,num2array(num.imaginary_part,a));
-
-        printf("i");
-        break;
-
-    default:
-        printf("Error in print_Complex()!\n");
-    }
-
-    printf("\n");
-
-    free(a);
-}
-
-complex_num c_Sum(complex_num a, complex_num b){
+complex_num c_Add(complex_num a, complex_num b){
     complex_num answer;
 
     answer.real_part = a.real_part + b.real_part;
@@ -398,7 +200,7 @@ complex_num c_Sum(complex_num a, complex_num b){
     return answer;
 }
 
-complex_num c_Difference(complex_num a, complex_num b){
+complex_num c_Subtract(complex_num a, complex_num b){
     complex_num answer;
 
     answer.real_part = a.real_part - b.real_part;
@@ -416,8 +218,24 @@ complex_num c_Product(complex_num a, complex_num b){
     return answer;
 }
 
-complex_num c_Quotient(complex_num a, complex_num b){
-    complex_num answer;
+complex_num c_Divide(complex_num a, complex_num b){
+    complex_num answer, fractions, numerator, b_bar;
+    //numerator cannot be 0
+    if(b.real_part == 0 && b.imaginary_part == 0){
+        answer.real_part = 0;
+        answer.imaginary_part = 0;
+        return answer;
+    }
+
+    b_bar.real_part = b.real_part;
+    b_bar.imaginary_part = -b.imaginary_part;
+
+    fractions = c_Product(a,b_bar);
+
+    numerator = c_Product(b,b_bar);
+
+    answer.real_part = fractions.real_part/numerator.real_part;
+    answer.imaginary_part = fractions.imaginary_part/numerator.real_part;
 
     return answer;
 }
@@ -432,20 +250,20 @@ int main()
     complex_num b = get_Complex();
 
     printf("Sum:");
-    answer = c_Sum(a,b);
-    print_Complex(answer);
+    answer = c_Add(a,b);
+    printf("% 2d%+di\n",(int)answer.real_part,(int)answer.imaginary_part);
 
     printf("Difference:");
-    answer = c_Difference(a,b);
-    print_Complex(answer);
+    answer = c_Subtract(a,b);
+    printf("% 2d%+di\n",(int)answer.real_part,(int)answer.imaginary_part);
 
     printf("Product:");
     answer = c_Product(a,b);
-    print_Complex(answer);
+    printf("% 2d%+di\n",(int)answer.real_part,(int)answer.imaginary_part);
 
-    //printf("Quotient:");
-    //answer = c_Quotient(a,b);
-    //print_Complex(answer);
+    printf("Quotient:");
+    answer = c_Divide(a,b);
+    printf("% .2f%+.2fi\n",answer.real_part,answer.imaginary_part);
 
     system("pause");
     return 0;
