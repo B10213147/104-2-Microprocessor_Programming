@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
+#include "string.h"
 
 #define false 0
 #define true 1
@@ -21,18 +22,14 @@ int char2int(char in){
 complex_num get_Complex(void){
     complex_num temp;
     char str[20];
-    gets(str);
-
     char first_flag = false;
     char mid_flag = false;
     char last_flag = false;
-    int i = 0;
-    char mid_Sign;
-    char first_Sign;
-    int last_Sign_bit;
-    int mid_Sign_bit;
+    char mid_Sign, first_Sign;
+    int last_Sign_bit, mid_Sign_bit;
 
-    while(str[i] != 0) i++;  //total bits of input string
+    gets(str);
+    int i = strlen(str);    //total bits of input string
 
     if(str[i-1] == 'i'){    //find the last bit is 'i' or not
         last_flag = true;

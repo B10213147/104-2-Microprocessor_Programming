@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1458168560 source:i:\lab1\main.c
+1458169992 source:i:\lab1\main.c
 	"stdio.h"
 	"stdlib.h"
 	"math.h"
+	"string.h"
 
