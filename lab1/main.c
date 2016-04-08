@@ -216,7 +216,7 @@ complex_num c_Product(complex_num a, complex_num b){
 }
 
 complex_num c_Divide(complex_num a, complex_num b){
-    complex_num answer, fractions, numerator, b_bar;
+    complex_num answer, fractions, numerator, b_Conjugate;
     //numerator cannot be 0
     if(b.real_part == 0 && b.imaginary_part == 0){
         answer.real_part = 0;
@@ -224,12 +224,12 @@ complex_num c_Divide(complex_num a, complex_num b){
         return answer;
     }
 
-    b_bar.real_part = b.real_part;
-    b_bar.imaginary_part = -b.imaginary_part;
+    b_Conjugate.real_part = b.real_part;
+    b_Conjugate.imaginary_part = -b.imaginary_part;
 
-    fractions = c_Product(a,b_bar);
+    fractions = c_Product(a,b_Conjugate);
 
-    numerator = c_Product(b,b_bar);
+    numerator = c_Product(b,b_Conjugate);
 
     answer.real_part = fractions.real_part/numerator.real_part;
     answer.imaginary_part = fractions.imaginary_part/numerator.real_part;
