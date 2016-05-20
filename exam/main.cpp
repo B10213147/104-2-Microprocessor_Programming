@@ -4,11 +4,20 @@
 
 using namespace std;
 
-void name_swap(string *a, string *b);
-void hight_swap(int *a, int *b);
+struct student{
+    string name;
+    int hight;
+};
 
-string name[length] = {"Mike", "Amy", "Bob", "Andy", "Mary"};
-int hight[length] = {170, 160, 175, 180, 163};
+void name_swap(struct student *a, struct student *b);
+
+struct student class_A[length] = {
+    {"Mike", 170},
+    {"Amy", 160},
+    {"Bob", 175},
+    {"Andy", 180},
+    {"Mary", 163}
+};
 
 int main()
 {
@@ -16,41 +25,34 @@ int main()
     //display initial value
     cout<<"=====Before compare====="<<endl;
     for(int i=0; i<length; i++){
-        cout<<name[i]<<" "<<hight[i]<<endl;
+        cout<<class_A[i].name<<" "<<class_A[i].hight<<endl;
     }
 
     for(int i=0; i<length; i++){
         num_min = i;
         //compare
         for(int j=i+1; j<length; j++){
-            if(hight[num_min] > hight[j]){
+            if(class_A[num_min].hight > class_A[j].hight){
                 num_min = j;
             }
         }
         //swap
         if(num_min != i){
-            name_swap(name+num_min, name+i);
-            hight_swap(hight+num_min, hight+i);
+            name_swap(class_A+num_min, class_A+i);
         }
     }
 
     //display compared value
     cout<<"=====After compare====="<<endl;
     for(int i=0; i<length; i++){
-        cout<<name[i]<<" "<<hight[i]<<endl;
+        cout<<class_A[i].name<<" "<<class_A[i].hight<<endl;
     }
 
     return 0;
 }
 
-void name_swap(string *a, string *b){
-    string temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-void hight_swap(int *a, int *b){
-    int temp = *a;
+void name_swap(struct student *a, struct student *b){
+    struct student temp = *a;
     *a = *b;
     *b = temp;
 }
